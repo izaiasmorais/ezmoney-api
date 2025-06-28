@@ -1,0 +1,10 @@
+services:
+  ezmoney-postgres-db:
+    container_name: ezmoney-postgres-db
+    image: bitnami/postgresql
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: ezmoney
+      POSTGRES_PASSWORD: ezmoney
+      POSTGRES_DB: ezmoney
