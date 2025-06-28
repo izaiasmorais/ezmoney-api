@@ -19,7 +19,7 @@ jobs:
           POSTGRESQL_DATABASE: ezmoney
     env:
       JWT_SECRET: testing
-      DATABASE_URL: "postgresql://plaseg:plaseg@localhost:5432/plaseg?schema=public"
+      DATABASE_URL: "postgresql://ezmoney:ezmoney@localhost:5432/ezmoney?schema=public"
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v2
