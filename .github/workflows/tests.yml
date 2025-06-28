@@ -33,4 +33,4 @@ jobs:
       - run: pnpm migrate
       - run: pnpm generate
       - run: pnpm build
-      - run: pnpm test:e2e
+      - run: pnpm test
