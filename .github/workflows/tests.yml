@@ -9,17 +9,17 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: bitnami/postgresql
-        ports:
-          - 5432:5432
+        ports: ["5432:5432"]
         env:
-          POSTGRESQL_USERNAME: docker
-          POSTGRESQL_PASSWORD: docker
-          POSTGRESQL_DATABASE: fastify
-
+          POSTGRESQL_USERNAME: ezmoney
+          POSTGRESQL_PASSWORD: ezmoney
+          POSTGRESQL_DATABASE: ezmoney
+    env:
+      JWT_SECRET: testing
+      DATABASE_URL: "postgresql://plaseg:plaseg@localhost:5432/plaseg?schema=public"
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v2
@@ -29,15 +29,8 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
-
       - run: pnpm install
       - run: pnpm migrate
-        env:
-          JWT_SECRET: testing
-          DATABASE_URL: "postgresql://plaseg:plaseg@localhost:5432/plaseg?schema=public"
       - run: pnpm generate
       - run: pnpm build
       - run: pnpm test:e2e
-        env:
-          JWT_SECRET: testing
-          DATABASE_URL: "postgresql://plaseg:plaseg@localhost:5432/plaseg?schema=public"

@@ -24,7 +24,7 @@ Uma API autodocumentável construída com Fastify para um sistema de gerenciamen
 | **src/**                | Código-fonte principal da aplicação            |
 | └─ **@types/**          | Definições de tipos TypeScript customizados    |
 | └─ **controllers/**     | Controladores para lidar com requisições HTTP  |
-| └─ **middleware/**      | Middlewares para processamento de requisições  |
+| └─ **middlewares/**      | Middlewares para processamento de requisições  |
 | └─ **schemas/**         | Esquemas de validação de dados                 |
 | └─ **services/**        | Camada de serviços e lógica de negócio         |
 | └─ **test/**            | Arquivos de teste da aplicação                 |
