@@ -7,11 +7,11 @@ import { prisma } from "../../services/prisma";
 
 export async function getProfile(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().get(
-		"/users/profile",
+		"/auth/profile",
 		{
 			onRequest: [verifyJwt],
 			schema: {
-				tags: ["Users"],
+				tags: ["Auth"],
 				operationId: "getProfile",
 				summary: "Get user profile",
 				security: [{ bearerAuth: [] }],
@@ -30,8 +30,7 @@ export async function getProfile(app: FastifyInstance) {
 					id: true,
 					name: true,
 					email: true,
-					createdAt: true,
-					updatedAt: true,
+					avatarUrl: true,
 				},
 			});
 

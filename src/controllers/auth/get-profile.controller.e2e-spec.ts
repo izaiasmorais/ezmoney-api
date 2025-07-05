@@ -7,7 +7,6 @@ import { prisma } from "../../services/prisma";
 
 describe("Get Profile (e2e)", () => {
 	let app: FastifyInstance;
-	let createdUserId: string | null = null;
 
 	beforeAll(async () => {
 		app = fastify();
@@ -27,7 +26,6 @@ describe("Get Profile (e2e)", () => {
 				password: await hash("00000000", 6),
 			},
 		});
-		createdUserId = user.id;
 
 		const accessToken = app.jwt.sign({
 			sub: user.id.toString(),

@@ -13,6 +13,7 @@ import fastifyJwt from "@fastify/jwt";
 import { errorHandler } from "./error-handler";
 import { authRoutes } from "./controllers/auth/auth.routes";
 import { env } from "./env";
+import { invoicesRoutes } from "./controllers/invoices/invoices.routes";
 
 const version = "1.0.0 - Release 1";
 
@@ -46,7 +47,10 @@ export function buildApp(app = fastify().withTypeProvider<ZodTypeProvider>()) {
 	app.register(fastifyJwt, {
 		secret: env.JWT_SECRET,
 	});
+
+	// Routes
 	app.register(authRoutes);
+	app.register(invoicesRoutes);
 
 	return app;
 }

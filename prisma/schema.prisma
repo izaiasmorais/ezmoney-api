@@ -7,16 +7,180 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id       String @id @default(uuid())
-  name     String
-  email    String @unique
-  password String
+enum InstallmentStatus {
+  PENDING
+  PAID
+  OVERDUE
+  DRAFT
+}
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum TransactionType {
+  DEBIT
+  CREDIT
+}
+
+enum AccountType {
+  CHECKING
+  SAVINGS
+  CREDIT_CARD
+  INVESTMENT
+}
+
+model User {
+  id        String  @id @default(uuid())
+  name      String
+  email     String  @unique
+  avatarUrl String? @map("avatar_url")
+  password  String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Invoice   Invoice[]
+  Budget    Budget[]
+  Account   Account[]
 
   @@index([createdAt])
   @@index([email])
   @@map("users")
+}
+
+model Invoice {
+  id                String   @id @default(uuid())
+  name              String
+  description       String?
+  unitValue         Decimal  @map("unit_value")
+  totalInstallments Int      @map("total_installments") @db.SmallInt
+  issueDate         DateTime @map("issue_date")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  categoryId String   @map("category_id")
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  installments Installment[]
+
+  @@index([userId])
+  @@index([categoryId])
+  @@index([createdAt])
+  @@map("invoices")
+}
+
+model Category {
+  id   String @id @default(uuid())
+  name String
+  code String @unique
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  invoices Invoice[]
+  budgets  Budget[]
+
+  @@index([code])
+  @@index([createdAt])
+  @@map("categories")
+}
+
+model Installment {
+  id        String            @id @default(uuid())
+  unitValue Decimal           @map("unit_value")
+  dueDate   DateTime          @map("due_date")
+  status    InstallmentStatus
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  invoiceId String  @map("invoice_id")
+  invoice   Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  transactions Transaction[]
+
+  @@index([invoiceId])
+  @@index([dueDate])
+  @@index([status])
+  @@index([createdAt])
+  @@map("installments")
+}
+
+model Transaction {
+  id     String          @id @default(uuid())
+  amount Decimal
+  type   TransactionType
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  installmentId String?      @map("installment_id")
+  installment   Installment? @relation(fields: [installmentId], references: [id], onDelete: Cascade)
+
+  paymentMethodId String        @map("payment_method_id")
+  paymentMethod   PaymentMethod @relation(fields: [paymentMethodId], references: [id])
+
+  accountId String  @map("account_id")
+  account   Account @relation(fields: [accountId], references: [id])
+
+  @@index([installmentId])
+  @@index([paymentMethodId])
+  @@index([accountId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("transactions")
+}
+
+model Budget {
+  id         String  @id @default(uuid())
+  userId     String  @map("user_id")
+  categoryId String  @map("category_id")
+  amount     Decimal
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id])
+
+  @@index([userId])
+  @@index([categoryId])
+  @@index([createdAt])
+  @@map("budgets")
+}
+
+model PaymentMethod {
+  id       String  @id @default(uuid())
+  name     String
+  code     String  @unique
+  isActive Boolean @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  transactions Transaction[]
+
+  @@index([code])
+  @@index([isActive])
+  @@index([createdAt])
+  @@map("payment_methods")
+}
+
+model Account {
+  id      String      @id @default(uuid())
+  userId  String      @map("user_id")
+  name    String
+  type    AccountType
+  balance Decimal     @default(0)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("accounts")
 }
