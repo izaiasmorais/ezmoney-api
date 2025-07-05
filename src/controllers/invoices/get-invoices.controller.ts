@@ -47,8 +47,6 @@ export async function getInvoices(app: FastifyInstance) {
 				unitValue: Number(invoice.unitValue),
 				totalInstallments: invoice.installments.length,
 				issueDate: invoice.issueDate.toISOString(),
-				createdAt: invoice.createdAt.toISOString(),
-				updatedAt: invoice.updatedAt.toISOString(),
 				category: invoice.category.name,
 			}));
 

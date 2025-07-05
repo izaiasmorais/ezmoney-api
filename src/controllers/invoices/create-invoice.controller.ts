@@ -1,7 +1,7 @@
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { FastifyInstance } from "fastify";
 import { errorSchema, successSchema } from "../../schemas/http";
-import { createInvoiceRequestBodySchema } from "../../schemas/invoice";
+import { createInvoiceRequestSchema } from "../../schemas/invoice";
 import { prisma } from "../../services/prisma";
 import { z } from "zod";
 import { verifyJwt } from "../../middlewares/auth";
@@ -15,7 +15,7 @@ export async function createInvoice(app: FastifyInstance) {
 				tags: ["Invoices"],
 				operationId: "createInvoice",
 				summary: "Create a new invoice",
-				body: createInvoiceRequestBodySchema.describe(
+				body: createInvoiceRequestSchema.describe(
 					"Create invoice request body"
 				),
 				response: {

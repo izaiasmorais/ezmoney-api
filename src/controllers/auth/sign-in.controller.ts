@@ -1,10 +1,7 @@
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { FastifyInstance } from "fastify";
 import { errorSchema, successSchema } from "../../schemas/http";
-import {
-	signInRequestBodySchema,
-	signInResponseSchema,
-} from "../../schemas/auth";
+import { signInRequestSchema, signInResponseSchema } from "../../schemas/auth";
 import { prisma } from "../../services/prisma";
 import { compare } from "bcrypt";
 import { env } from "../../env";
@@ -17,7 +14,7 @@ export async function signIn(app: FastifyInstance) {
 				tags: ["Auth"],
 				operationId: "signIn",
 				summary: "Authenticate a user",
-				body: signInRequestBodySchema.describe("Sign in request body"),
+				body: signInRequestSchema.describe("Sign in request body"),
 				response: {
 					200: successSchema(signInResponseSchema).describe("Success"),
 					400: errorSchema.describe("Bad Request"),

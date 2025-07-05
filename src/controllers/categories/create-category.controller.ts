@@ -1,20 +1,23 @@
 import { ZodTypeProvider } from "fastify-type-provider-zod";
 import { FastifyInstance } from "fastify";
 import { errorSchema, successSchema } from "../../schemas/http";
-import { signUpRequestSchema } from "../../schemas/auth";
+import { createCategoryRequestSchema } from "../../schemas/category";
 import { prisma } from "../../services/prisma";
-import { hash } from "bcrypt";
 import { z } from "zod";
+import { verifyJwt } from "../../middlewares/auth";
 
-export async function signUp(app: FastifyInstance) {
+export async function createCategory(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().post(
-		"/auth/sign-up",
+		"/categories",
 		{
+			onRequest: [verifyJwt],
 			schema: {
-				tags: ["Auth"],
-				operationId: "signUp",
-				summary: "Register a new user",
-				body: signUpRequestSchema.describe("Sign up request body"),
+				tags: ["Categories"],
+				operationId: "createCategory",
+				summary: "Create a new category",
+				body: createCategoryRequestSchema.describe(
+					"Create category request body"
+				),
 				response: {
 					201: successSchema(z.null()).describe("Created"),
 					400: errorSchema.describe("Bad Request"),
@@ -23,28 +26,33 @@ export async function signUp(app: FastifyInstance) {
 			},
 		},
 		async (request, reply) => {
-			const { name, email, password } = request.body;
+			const userId = request.user.sub;
 
-			const doesUserAlreadyExists = await prisma.user.findUnique({
+			const { name, color } = request.body;
+
+			const doesCategoryExists = await prisma.category.findUnique({
 				where: {
-					email,
+					userId_name: {
+						userId,
+						name,
+					},
 				},
 				select: { id: true },
 			});
 
-			if (doesUserAlreadyExists) {
+			if (doesCategoryExists) {
 				return reply.status(409).send({
 					success: false,
-					errors: ["E-mail já cadastrado"],
+					errors: ["A categoria já existe"],
 					data: null,
 				});
 			}
 
-			await prisma.user.create({
+			await prisma.category.create({
 				data: {
-					name: name,
-					email: email.toLowerCase(),
-					password: await hash(password, 6),
+					name,
+					userId,
+					color,
 				},
 			});
 

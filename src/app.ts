@@ -14,6 +14,7 @@ import { errorHandler } from "./error-handler";
 import { authRoutes } from "./controllers/auth/auth.routes";
 import { env } from "./env";
 import { invoicesRoutes } from "./controllers/invoices/invoices.routes";
+import { categoriesRoutes } from "./controllers/categories/categories.routes";
 
 const version = "1.0.0 - Release 1";
 
@@ -51,6 +52,7 @@ export function buildApp(app = fastify().withTypeProvider<ZodTypeProvider>()) {
 	// Routes
 	app.register(authRoutes);
 	app.register(invoicesRoutes);
+	app.register(categoriesRoutes);
 
 	return app;
 }

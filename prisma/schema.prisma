@@ -33,11 +33,12 @@ model User {
   avatarUrl String? @map("avatar_url")
   password  String
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   Invoice   Invoice[]
   Budget    Budget[]
   Account   Account[]
+  Category  Category[]
 
   @@index([createdAt])
   @@index([email])
@@ -70,9 +71,9 @@ model Invoice {
 }
 
 model Category {
-  id   String @id @default(uuid())
-  name String
-  code String @unique
+  id    String @id @default(uuid())
+  name  String
+  color String
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -80,7 +81,10 @@ model Category {
   invoices Invoice[]
   budgets  Budget[]
 
-  @@index([code])
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, name])
   @@index([createdAt])
   @@map("categories")
 }
