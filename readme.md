@@ -24,10 +24,10 @@ Uma API autodocumentável construída com Fastify para um sistema de gerenciamen
 | **src/**                | Código-fonte principal da aplicação            |
 | └─ **@types/**          | Definições de tipos TypeScript customizados    |
 | └─ **controllers/**     | Controladores para lidar com requisições HTTP  |
-| └─ **middlewares/**      | Middlewares para processamento de requisições  |
+| └─ **middlewares/**     | Middlewares para processamento de requisições  |
 | └─ **schemas/**         | Esquemas de validação de dados                 |
 | └─ **services/**        | Camada de serviços e lógica de negócio         |
-| └─ **test/**            | Arquivos de teste da aplicação                 |
+| └─ **test/**            | Configuração de testes da aplicação            |
 | └─ **utils/**           | Funções utilitárias e helpers                  |
 | └─ **app.ts**           | Configuração principal da aplicação            |
 | └─ **env.ts**           | Configurações de variáveis de ambiente         |
@@ -36,11 +36,15 @@ Uma API autodocumentável construída com Fastify para um sistema de gerenciamen
 
 ## Endpoints
 
-| Método   | Endpoint         | Descrição                                   |
-| -------- | ---------------- | ------------------------------------------- |
-| **POST** | `/auth/sign-up`  | Registrar um novo usuário                   |
-| **POST** | `/auth/sign-in`  | Fazer login e obter o token de autenticação |
-| **GET**  | `/users/profile` | Obter o perfil do usuário autenticado       |
+| Método   | Endpoint        | Descrição                                   |
+| -------- | --------------- | ------------------------------------------- |
+| **POST** | `/auth/sign-up` | Registrar um novo usuário                   |
+| **POST** | `/auth/sign-in` | Fazer login e obter o token de autenticação |
+| **GET**  | `/auth/profile` | Obter o perfil do usuário autenticado       |
+| **POST** | `/categories`   | Criar uma nova categoria                    |
+| **GET**  | `/categories`   | Listar todas as categorias                  |
+| **POST** | `/invoices`     | Criar uma nova fatura                       |
+| **GET**  | `/invoices`     | Listar todas as faturas                     |
 
 ## Instalação
 
@@ -69,10 +73,10 @@ pnpm install
 Configure o arquivo .env com suas credenciais (baseando-se no .env.example):
 
 ```env
-NODE_ENV=development
 EXPIRES_IN=10000
 PORT=3333
-DATABASE_URL=postgresql://docker:docker@localhost:5432/docker
+SECRET="secret"
+DATABASE_URL="postgresql://docker:docker@localhost:5432/docker"
 ```
 
 ## Executando o Projeto
