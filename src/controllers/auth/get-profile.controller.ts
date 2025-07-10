@@ -1,9 +1,11 @@
-import { FastifyInstance } from "fastify";
-import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { errorSchema, successSchema } from "../../schemas/http";
-import { verifyJwt } from "../../middlewares/auth";
-import { getProfileResponseSchema } from "../../schemas/auth";
-import { prisma } from "../../services/prisma";
+import { eq } from "drizzle-orm";
+import type { FastifyInstance } from "fastify";
+import type { ZodTypeProvider } from "fastify-type-provider-zod";
+import { db } from "../../db/connection.ts";
+import { users } from "../../db/schemas/users.ts";
+import { verifyJwt } from "../../middlewares/auth.ts";
+import { getProfileResponseSchema } from "../../schemas/auth.ts";
+import { errorSchema, successSchema } from "../../schemas/http.ts";
 
 export async function getProfile(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().get(
@@ -24,15 +26,15 @@ export async function getProfile(app: FastifyInstance) {
 		async (request, reply) => {
 			const userId = request.user.sub;
 
-			const user = await prisma.user.findUnique({
-				where: { id: userId },
-				select: {
-					id: true,
-					name: true,
-					email: true,
-					avatarUrl: true,
-				},
-			});
+			const [user] = await db
+				.select({
+					id: users.id,
+					name: users.name,
+					email: users.email,
+					avatarUrl: users.avatarUrl,
+				})
+				.from(users)
+				.where(eq(users.id, userId));
 
 			if (!user) {
 				return reply.status(404).send({

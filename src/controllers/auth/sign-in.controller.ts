@@ -1,10 +1,15 @@
-import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { FastifyInstance } from "fastify";
-import { errorSchema, successSchema } from "../../schemas/http";
-import { signInRequestSchema, signInResponseSchema } from "../../schemas/auth";
-import { prisma } from "../../services/prisma";
 import { compare } from "bcrypt";
-import { env } from "../../env";
+import { eq } from "drizzle-orm";
+import type { FastifyInstance } from "fastify";
+import type { ZodTypeProvider } from "fastify-type-provider-zod";
+import { db } from "../../db/connection.ts";
+import { users } from "../../db/schemas/users.ts";
+import { env } from "../../env.ts";
+import {
+	signInRequestSchema,
+	signInResponseSchema,
+} from "../../schemas/auth.ts";
+import { errorSchema, successSchema } from "../../schemas/http.ts";
 
 export async function signIn(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().post(
@@ -25,17 +30,18 @@ export async function signIn(app: FastifyInstance) {
 		async (request, reply) => {
 			const { email, password } = request.body;
 
-			const user = await prisma.user.findUnique({
-				where: { email },
-				select: {
-					id: true,
-					name: true,
-					email: true,
-					password: true,
-				},
-			});
+			const user = await db
+				.select({
+					id: users.id,
+					name: users.name,
+					email: users.email,
+					password: users.password,
+				})
+				.from(users)
+				.where(eq(users.email, email))
+				.limit(1);
 
-			if (!user) {
+			if (user.length === 0) {
 				return reply.status(400).send({
 					success: false,
 					errors: ["Credenciais inválidas"],
@@ -43,8 +49,7 @@ export async function signIn(app: FastifyInstance) {
 				});
 			}
 
-			const isPasswordValid = await compare(password, user.password);
-
+			const isPasswordValid = await compare(password, user[0].password);
 			if (!isPasswordValid) {
 				return reply.status(401).send({
 					success: false,
@@ -55,7 +60,7 @@ export async function signIn(app: FastifyInstance) {
 
 			const accessToken = await reply.jwtSign(
 				{
-					sub: user.id.toString(),
+					sub: user[0].id.toString(),
 				},
 				{
 					sign: {

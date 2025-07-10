@@ -1,10 +1,12 @@
-import { ZodTypeProvider } from "fastify-type-provider-zod";
-import { FastifyInstance } from "fastify";
-import { errorSchema, successSchema } from "../../schemas/http";
-import { signUpRequestSchema } from "../../schemas/auth";
-import { prisma } from "../../services/prisma";
 import { hash } from "bcrypt";
+import { eq } from "drizzle-orm";
+import type { FastifyInstance } from "fastify";
+import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
+import { db } from "../../db/connection.ts";
+import { users } from "../../db/schemas/index.ts";
+import { signUpRequestSchema } from "../../schemas/auth.ts";
+import { errorSchema, successSchema } from "../../schemas/http.ts";
 
 export async function signUp(app: FastifyInstance) {
 	app.withTypeProvider<ZodTypeProvider>().post(
@@ -16,7 +18,7 @@ export async function signUp(app: FastifyInstance) {
 				summary: "Register a new user",
 				body: signUpRequestSchema.describe("Sign up request body"),
 				response: {
-					201: successSchema(z.null()).describe("Created"),
+					201: successSchema(z.any()).describe("Created"),
 					400: errorSchema.describe("Bad Request"),
 					409: errorSchema.describe("Conflict"),
 				},
@@ -25,27 +27,24 @@ export async function signUp(app: FastifyInstance) {
 		async (request, reply) => {
 			const { name, email, password } = request.body;
 
-			const doesUserAlreadyExists = await prisma.user.findUnique({
-				where: {
-					email,
-				},
-				select: { id: true },
-			});
+			const existingUser = await db
+				.select({ id: users.id })
+				.from(users)
+				.where(eq(users.email, email))
+				.limit(1);
 
-			if (doesUserAlreadyExists) {
+			if (existingUser.length > 0) {
 				return reply.status(409).send({
 					success: false,
-					errors: ["E-mail já cadastrado"],
+					errors: ["E-mail já cadastrado."],
 					data: null,
 				});
 			}
 
-			await prisma.user.create({
-				data: {
-					name: name,
-					email: email.toLowerCase(),
-					password: await hash(password, 6),
-				},
+			await db.insert(users).values({
+				name,
+				email: email.toLowerCase(),
+				password: await hash(password, 6),
 			});
 
 			return reply.status(201).send({

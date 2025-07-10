@@ -1,20 +1,17 @@
+import fastifyCors from "@fastify/cors";
+import fastifyJwt from "@fastify/jwt";
+import fastifySwagger from "@fastify/swagger";
+import fastifySwaggerUI from "@fastify/swagger-ui";
+import fastify from "fastify";
 import {
 	jsonSchemaTransform,
 	serializerCompiler,
 	validatorCompiler,
-	ZodTypeProvider,
+	type ZodTypeProvider,
 } from "fastify-type-provider-zod";
-import fastify from "fastify";
-import fastifyCors from "@fastify/cors";
-import fastifySwagger from "@fastify/swagger";
-import fastifySwaggerUI from "@fastify/swagger-ui";
-import fastifyJwt from "@fastify/jwt";
-
-import { errorHandler } from "./error-handler";
-import { authRoutes } from "./controllers/auth/auth.routes";
-import { env } from "./env";
-import { invoicesRoutes } from "./controllers/invoices/invoices.routes";
-import { categoriesRoutes } from "./controllers/categories/categories.routes";
+import { authRoutes } from "./controllers/auth/auth.routes.ts";
+import { env } from "./env.ts";
+import { errorHandler } from "./error-handler.ts";
 
 const version = "1.0.0 - Release 1";
 
@@ -45,14 +42,13 @@ export function buildApp(app = fastify().withTypeProvider<ZodTypeProvider>()) {
 	app.register(fastifySwaggerUI, {
 		routePrefix: "/",
 	});
+	// @ts-ignore
 	app.register(fastifyJwt, {
 		secret: env.JWT_SECRET,
 	});
 
 	// Routes
 	app.register(authRoutes);
-	app.register(invoicesRoutes);
-	app.register(categoriesRoutes);
 
 	return app;
 }
