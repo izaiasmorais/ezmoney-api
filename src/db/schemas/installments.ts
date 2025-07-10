@@ -1,6 +1,6 @@
 import { decimal, index, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
-import { installmentStatus } from "./enums";
-import { invoices } from "./invoices";
+import { installmentStatus } from "./enums.ts";
+import { invoices } from "./invoices.ts";
 
 export const installments = pgTable(
 	"installments",

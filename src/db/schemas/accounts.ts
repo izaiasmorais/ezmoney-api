@@ -6,8 +6,8 @@ import {
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
-import { accountType } from "./enums";
-import { users } from "./users";
+import { accountType } from "./enums.ts";
+import { users } from "./users.ts";
 
 export const accounts = pgTable(
 	"accounts",

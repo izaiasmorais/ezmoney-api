@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
+import type { FastifySchemaValidationError } from "fastify/types/schema.js";
 import { ZodError } from "zod";
-import type { FastifySchemaValidationError } from "fastify/types/schema";
 
 type FastifyErrorHandler = FastifyInstance["errorHandler"];
 

@@ -1,6 +1,6 @@
 import { decimal, index, pgTable, timestamp, uuid } from "drizzle-orm/pg-core";
-import { categories } from "./categories";
-import { users } from "./users";
+import { categories } from "./categories.ts";
+import { users } from "./users.ts";
 
 export const budgets = pgTable(
 	"budgets",

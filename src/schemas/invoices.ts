@@ -22,3 +22,18 @@ export const getInvoicesResponseSchema = z.object({
 		})
 	),
 });
+
+export const getInvoicesInstallmentsParamsSchema = z.object({
+	invoiceId: z.string().uuid(),
+});
+
+export const getInvoicesInstallmentsResponseSchema = z.object({
+	installments: z.array(
+		z.object({
+			id: z.string(),
+			unitValue: z.number(),
+			dueDate: z.string(),
+			status: z.enum(["PENDING", "PAID", "OVERDUE", "DRAFT"]),
+		})
+	),
+});

@@ -7,6 +7,7 @@
 	"scripts": {
 		"dev": "tsx watch src/server.ts",
 		"start": "node dist/server.js",
+		"health": "pnpm tsc --noEmit",
 		"docker": "docker compose up -d",
 		"generate": "npx drizzle-kit generate",
 		"migrate": "npx drizzle-kit migrate",

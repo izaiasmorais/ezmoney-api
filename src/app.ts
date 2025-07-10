@@ -10,6 +10,8 @@ import {
 	type ZodTypeProvider,
 } from "fastify-type-provider-zod";
 import { authRoutes } from "./controllers/auth/auth.routes.ts";
+import { categoriesRoutes } from "./controllers/categories/categories.routes.ts";
+import { invoicesRoutes } from "./controllers/invoices/invoices.routes.ts";
 import { env } from "./env.ts";
 import { errorHandler } from "./error-handler.ts";
 
@@ -49,6 +51,8 @@ export function buildApp(app = fastify().withTypeProvider<ZodTypeProvider>()) {
 
 	// Routes
 	app.register(authRoutes);
+	app.register(categoriesRoutes);
+	app.register(invoicesRoutes);
 
 	return app;
 }
