@@ -4,6 +4,9 @@
 	"description": "API do EZMoney",
 	"type": "module",
 	"main": "server.js",
+	"engines": {
+		"node": ">=20.6.0"
+	},
 	"scripts": {
 		"dev": "node --env-file .env --experimental-strip-types --no-warnings --watch src/server.ts",
 		"start": "node --env-file .env --experimental-strip-types --no-warnings src/server.ts",
