@@ -5,8 +5,8 @@
 	"type": "module",
 	"main": "server.js",
 	"scripts": {
-		"dev": "tsx watch src/server.ts",
-		"start": "node dist/server.js",
+		"dev": "node --env-file .env --experimental-strip-types --no-warnings --watch src/server.ts",
+		"start": "node --env-file .env --experimental-strip-types --no-warnings src/server.ts",
 		"health": "pnpm tsc --noEmit",
 		"docker": "docker compose up -d",
 		"generate": "npx drizzle-kit generate",
